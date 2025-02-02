@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 
 type Props = {
-    onSearch: (value: string) => void; // Function prop to send search value to parent
+    onSearch: (value: string) => void;
   };
 
 type State = {

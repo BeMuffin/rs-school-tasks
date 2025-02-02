@@ -1,4 +1,4 @@
-import { Component, ErrorInfo, ReactNode } from "react";
+import { Component, ErrorInfo, ReactNode } from 'react';
 
 type Props = {
   children: ReactNode;
@@ -12,7 +12,7 @@ type State = {
 class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false, errorMessage: "" };
+    this.state = { hasError: false, errorMessage: '' };
   }
 
   static getDerivedStateFromError(error: Error): State {
@@ -20,11 +20,11 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("Error caught in ErrorBoundary:", error, errorInfo);
+    console.error('Error caught in ErrorBoundary:', error, errorInfo);
   }
 
   handleReset = () => {
-    this.setState({ hasError: false, errorMessage: "" });
+    this.setState({ hasError: false, errorMessage: '' });
   };
 
   render() {

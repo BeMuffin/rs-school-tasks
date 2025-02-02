@@ -1,8 +1,8 @@
-import { Component } from "react";
-import SearchBar from "./SearchBar";
-import SearchResult from "./SearchResult";
-import ErrorBoundary from "./ErrorBoundary"
-import axios from "axios";
+import { Component } from 'react';
+import SearchBar from './SearchBar';
+import SearchResult from './SearchResult';
+import ErrorBoundary from './ErrorBoundary';
+import axios from 'axios';
 
 type State = {
   searchTerm: string;
@@ -16,7 +16,7 @@ class Connector extends Component<{}, State> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      searchTerm: "",
+      searchTerm: '',
       pokemons: [],
       error: null,
       loading: false,
@@ -29,29 +29,35 @@ class Connector extends Component<{}, State> {
   }
 
   fetchAllPokemons = async () => {
-    // this.setState({ loading: true, error: null }); 
-
     try {
-      const response = await axios.get("https://pokeapi.co/api/v2/pokemon-species?limit=20");
+      const response = await axios.get(
+        'https://pokeapi.co/api/v2/pokemon-species?limit=20'
+      );
       const pokemonList = response.data.results;
 
       const detailedPokemons = await Promise.all(
         pokemonList.map(async (pokemon: { name: string; url: string }) => {
           const details = await axios.get(pokemon.url);
           const flavorTextEntry = details.data.flavor_text_entries.find(
-            (entry: any) => entry.language.name === "en"
+            (entry: any) => entry.language.name === 'en'
           );
 
           return {
             name: details.data.name,
-            description: flavorTextEntry ? flavorTextEntry.flavor_text : "No description available",
+            description: flavorTextEntry
+              ? flavorTextEntry.flavor_text
+              : 'No description available',
           };
         })
       );
 
       this.setState({ pokemons: detailedPokemons, error: null });
     } catch (error) {
-      this.setState({ error: "Failed to load Pokémon list.", pokemons: [], loading: false });
+      this.setState({
+        error: 'Failed to load Pokémon list.',
+        pokemons: [],
+        loading: false,
+      });
     }
   };
 
@@ -64,16 +70,20 @@ class Connector extends Component<{}, State> {
     this.setState({ loading: true, error: null });
 
     try {
-      const response = await axios.get(`https://pokeapi.co/api/v2/pokemon-species/${value}`);
+      const response = await axios.get(
+        `https://pokeapi.co/api/v2/pokemon-species/${value}`
+      );
       const flavorTextEntry = response.data.flavor_text_entries.find(
-        (entry: any) => entry.language.name === "en"
+        (entry: any) => entry.language.name === 'en'
       );
 
       this.setState({
         pokemons: [
           {
             name: response.data.name,
-            description: flavorTextEntry ? flavorTextEntry.flavor_text : "No description available",
+            description: flavorTextEntry
+              ? flavorTextEntry.flavor_text
+              : 'No description available',
           },
         ],
         error: null,
@@ -81,7 +91,7 @@ class Connector extends Component<{}, State> {
       });
     } catch (error) {
       this.setState({
-        error: "Pokémon not found. Please try again.",
+        error: 'Pokémon not found. Please try again.',
         pokemons: [],
         loading: false,
       });
@@ -94,16 +104,23 @@ class Connector extends Component<{}, State> {
 
   render() {
     if (this.state.throwError) {
-      throw new Error("Error! Please try again");
+      throw new Error('Error! Please try again');
     }
 
     return (
       <ErrorBoundary>
         <SearchBar onSearch={this.handleSearch} />
-          {this.state.loading ? <div className="loader"></div> : <SearchResult pokemons={this.state.pokemons} error={this.state.error} />}
-          <button className="error-button" onClick={this.handleThrowError}>
-            Throw Error
-          </button>
+        {this.state.loading ? (
+          <div className="loader"></div>
+        ) : (
+          <SearchResult
+            pokemons={this.state.pokemons}
+            error={this.state.error}
+          />
+        )}
+        <button className="error-button" onClick={this.handleThrowError}>
+          Throw Error
+        </button>
       </ErrorBoundary>
     );
   }
