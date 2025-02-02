@@ -3,7 +3,7 @@ name: Deploy React App to GitHub Pages
 on:
   push:
     branches:
-      - main  # Change this to the branch you want to deploy from
+      - class-components  # Change this to the branch you want to deploy from
 
 permissions:
   contents: write  # Required for GitHub Pages deployment
