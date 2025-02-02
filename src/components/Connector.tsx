@@ -12,8 +12,20 @@ type State = {
   throwError: boolean;
 };
 
-class Connector extends Component<{}, State> {
-  constructor(props: {}) {
+interface FlavorTextEntry {
+  flavor_text: string;
+  language: {
+    name: string;
+  };
+}
+
+interface PokemonDetails {
+  name: string;
+  flavor_text_entries: FlavorTextEntry[];
+}
+
+class Connector extends Component<Record<string, never>, State> {
+  constructor(props: Record<string, never>) {
     super(props);
     this.state = {
       searchTerm: '',
@@ -37,9 +49,9 @@ class Connector extends Component<{}, State> {
 
       const detailedPokemons = await Promise.all(
         pokemonList.map(async (pokemon: { name: string; url: string }) => {
-          const details = await axios.get(pokemon.url);
+          const details = await axios.get<PokemonDetails>(pokemon.url);
           const flavorTextEntry = details.data.flavor_text_entries.find(
-            (entry: any) => entry.language.name === 'en'
+            (entry: FlavorTextEntry) => entry.language.name === 'en'
           );
 
           return {
@@ -53,6 +65,7 @@ class Connector extends Component<{}, State> {
 
       this.setState({ pokemons: detailedPokemons, error: null });
     } catch (error) {
+      console.error(`Error fetching Pokémon list: ${error}`);
       this.setState({
         error: 'Failed to load Pokémon list.',
         pokemons: [],
@@ -74,7 +87,7 @@ class Connector extends Component<{}, State> {
         `https://pokeapi.co/api/v2/pokemon-species/${value}`
       );
       const flavorTextEntry = response.data.flavor_text_entries.find(
-        (entry: any) => entry.language.name === 'en'
+        (entry: FlavorTextEntry) => entry.language.name === 'en'
       );
 
       this.setState({
@@ -90,6 +103,7 @@ class Connector extends Component<{}, State> {
         loading: false,
       });
     } catch (error) {
+      console.error(`Error fetching Pokémon: ${error}`);
       this.setState({
         error: 'Pokémon not found. Please try again.',
         pokemons: [],
